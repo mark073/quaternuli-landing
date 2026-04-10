@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QUATERNULI — A Seed Notebook</title>
+<meta name="description" content="A seed notebook for half-formed thoughts — with an AI thinking partner called the Gardener.">
+<meta property="og:title" content="QUATERNULI">
+<meta property="og:description" content="Capture, tend, and harvest your ideas with an AI thinking partner.">
+<meta property="og:url" content="https://quaternuli.xyz">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black:  #111111;
+    --white:  #FFFFFF;
+    --red:    #E8001D;
+    --g100:   #F5F5F5;
+    --g200:   #E8E8E8;
+    --g400:   #999999;
+    --g600:   #555555;
+    --sans:   'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --mono:   'JetBrains Mono', monospace;
+    --display:'Bebas Neue', 'Helvetica Neue', Helvetica, sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--white);
+    color: var(--black);
+    overflow-x: hidden;
+  }
+
+  /* ── GRID LINES (decorative background) ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--g200) 1px, transparent 1px),
+      linear-gradient(90deg, var(--g200) 1px, transparent 1px);
+    background-size: 64px 64px;
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 52px;
+    display: flex;
+    align-items: stretch;
+    border-bottom: 2px solid var(--black);
+    background: var(--white);
+    z-index: 100;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 20px;
+    border-right: 2px solid var(--black);
+    text-decoration: none;
+    color: var(--black);
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .nav-logo img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    display: block;
+  }
+
+  .nav-logo .u { color: var(--red); }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-left: auto;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 20px;
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--g400);
+    border-left: 1px solid var(--g200);
+    transition: all 0.12s;
+  }
+
+  .nav-link:hover { color: var(--black); background: var(--g100); }
+
+  .nav-cta {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 24px;
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--white);
+    background: var(--black);
+    border-left: 2px solid var(--black);
+    transition: background 0.12s;
+  }
+
+  .nav-cta:hover { background: var(--red); }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 120px 80px 80px;
+    border-bottom: 2px solid var(--black);
+    overflow: hidden;
+  }
+
+  .hero-rule {
+    position: absolute;
+    top: 0; bottom: 0;
+    right: 420px;
+    width: 2px;
+    background: var(--black);
+  }
+
+  .hero-content {
+    max-width: 640px;
+    animation: fadeUp 0.7s ease forwards;
+  }
+
+  .hero-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .hero-tag::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 2px;
+    background: var(--red);
+  }
+
+  .hero-title {
+    font-family: var(--display);
+    font-size: clamp(72px, 10vw, 140px);
+    line-height: 0.9;
+    letter-spacing: -0.01em;
+    color: var(--black);
+    margin-bottom: 32px;
+  }
+
+  .hero-title .line2 { color: var(--red); }
+
+  .hero-sub {
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--g600);
+    max-width: 480px;
+    margin-bottom: 48px;
+  }
+
+  .hero-sub strong { color: var(--black); }
+
+  .hero-buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    background: var(--black);
+    color: var(--white);
+    text-decoration: none;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border: 2px solid var(--black);
+    transition: all 0.12s;
+  }
+
+  .btn-primary:hover { background: var(--red); border-color: var(--red); }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    background: transparent;
+    color: var(--black);
+    text-decoration: none;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border: 2px solid var(--black);
+    transition: all 0.12s;
+  }
+
+  .btn-secondary:hover { background: var(--black); color: var(--white); }
+
+  .hero-aside {
+    position: absolute;
+    right: 0;
+    top: 52px;
+    bottom: 0;
+    width: 420px;
+    display: flex;
+    flex-direction: column;
+    border-left: 2px solid var(--black);
+    overflow: hidden;
+  }
+
+  .hero-aside-inner {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 48px 40px;
+    gap: 32px;
+    animation: fadeUp 0.9s ease forwards;
+  }
+
+  .phase-block {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .phase-num {
+    font-family: var(--display);
+    font-size: 48px;
+    line-height: 1;
+    color: var(--g200);
+    flex-shrink: 0;
+    width: 48px;
+  }
+
+  .phase-content {}
+
+  .phase-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 4px;
+  }
+
+  .phase-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--black);
+    margin-bottom: 4px;
+  }
+
+  .phase-desc {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--g600);
+  }
+
+  /* ── FEATURES ── */
+  .features {
+    position: relative;
+    z-index: 1;
+    padding: 80px;
+    border-bottom: 2px solid var(--black);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    margin-bottom: 56px;
+    padding-bottom: 16px;
+    border-bottom: 1.5px solid var(--black);
+  }
+
+  .section-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--red);
+    letter-spacing: 0.15em;
+  }
+
+  .section-title {
+    font-family: var(--display);
+    font-size: 48px;
+    letter-spacing: 0.02em;
+    color: var(--black);
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border: 2px solid var(--black);
+  }
+
+  .feature-card {
+    padding: 32px;
+    border-right: 2px solid var(--black);
+    border-bottom: 2px solid var(--black);
+    transition: background 0.12s;
+  }
+
+  .feature-card:nth-child(3n) { border-right: none; }
+  .feature-card:nth-child(n+4) { border-bottom: none; }
+  .feature-card:hover { background: var(--g100); }
+
+  .feature-icon {
+    font-size: 24px;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .feature-name {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--black);
+    margin-bottom: 8px;
+  }
+
+  .feature-desc {
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--g600);
+  }
+
+  /* ── GARDENER ── */
+  .gardener {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 2px solid var(--black);
+    min-height: 480px;
+  }
+
+  .gardener-left {
+    padding: 80px;
+    border-right: 2px solid var(--black);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .gardener-right {
+    padding: 48px;
+    background: var(--black);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 16px;
+  }
+
+  .gardener-title {
+    font-family: var(--display);
+    font-size: 64px;
+    line-height: 0.9;
+    color: var(--black);
+    margin-bottom: 24px;
+  }
+
+  .gardener-title span { color: var(--red); }
+
+  .gardener-desc {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--g600);
+    margin-bottom: 32px;
+  }
+
+  /* Fake gardener message */
+  .g-msg {
+    border-left: 2px solid var(--g400);
+    padding: 14px 16px;
+    animation: fadeUp 0.5s ease forwards;
+    opacity: 0;
+  }
+
+  .g-msg:nth-child(1) { border-left-color: var(--red); animation-delay: 0.3s; }
+  .g-msg:nth-child(2) { border-left-color: #555; animation-delay: 0.7s; }
+  .g-msg:nth-child(3) { border-left-color: #777; animation-delay: 1.1s; font-style: italic; }
+
+  .g-msg-label {
+    font-family: var(--mono);
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--g400);
+    margin-bottom: 6px;
+  }
+
+  .g-msg:nth-child(1) .g-msg-label { color: var(--red); }
+  .g-msg:nth-child(2) .g-msg-label { color: #888; }
+
+  .g-msg-text {
+    font-family: var(--sans);
+    font-size: 12px;
+    line-height: 1.65;
+    color: #aaa;
+  }
+
+  /* ── STACK ── */
+  .stack {
+    position: relative;
+    z-index: 1;
+    padding: 80px;
+    border-bottom: 2px solid var(--black);
+  }
+
+  .stack-row {
+    display: flex;
+    border: 2px solid var(--black);
+    border-bottom: none;
+  }
+
+  .stack-row:last-child { border-bottom: 2px solid var(--black); }
+
+  .stack-label {
+    width: 200px;
+    flex-shrink: 0;
+    padding: 16px 20px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--g400);
+    border-right: 2px solid var(--black);
+    display: flex;
+    align-items: center;
+  }
+
+  .stack-value {
+    padding: 16px 24px;
+    font-size: 14px;
+    color: var(--black);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .stack-value a {
+    color: var(--black);
+    text-decoration: none;
+    font-weight: 600;
+    border-bottom: 1px solid var(--g200);
+    transition: border-color 0.1s, color 0.1s;
+  }
+
+  .stack-value a:hover { color: var(--red); border-color: var(--red); }
+
+  /* ── CTA ── */
+  .cta {
+    position: relative;
+    z-index: 1;
+    padding: 100px 80px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    border-bottom: 2px solid var(--black);
+    background: var(--black);
+  }
+
+  .cta-title {
+    font-family: var(--display);
+    font-size: clamp(48px, 8vw, 96px);
+    line-height: 0.9;
+    color: var(--white);
+    letter-spacing: 0.02em;
+  }
+
+  .cta-title span { color: var(--red); }
+
+  .cta-sub {
+    font-size: 15px;
+    color: #777;
+    max-width: 480px;
+    line-height: 1.6;
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .btn-light {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    background: var(--white);
+    color: var(--black);
+    text-decoration: none;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border: 2px solid var(--white);
+    transition: all 0.12s;
+  }
+
+  .btn-light:hover { background: var(--red); border-color: var(--red); color: var(--white); }
+
+  .btn-outline-light {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    background: transparent;
+    color: var(--white);
+    text-decoration: none;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border: 2px solid #333;
+    transition: all 0.12s;
+  }
+
+  .btn-outline-light:hover { border-color: var(--white); }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    padding: 0 80px;
+    height: 52px;
+    border-top: none;
+    background: var(--black);
+    gap: 24px;
+  }
+
+  .footer-logo {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    color: #444;
+  }
+
+  .footer-logo .u { color: var(--red); }
+
+  .footer-links {
+    display: flex;
+    gap: 20px;
+    margin-left: auto;
+  }
+
+  .footer-link {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #444;
+    text-decoration: none;
+    transition: color 0.1s;
+  }
+
+  .footer-link:hover { color: var(--white); }
+
+  .footer-copy {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: #333;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .hero { padding: 100px 32px 60px; }
+    .hero-rule { display: none; }
+    .hero-aside { display: none; }
+    .features { padding: 60px 32px; }
+    .features-grid { grid-template-columns: 1fr 1fr; }
+    .feature-card:nth-child(3n) { border-right: 2px solid var(--black); }
+    .feature-card:nth-child(2n) { border-right: none; }
+    .gardener { grid-template-columns: 1fr; }
+    .gardener-left { padding: 48px 32px; }
+    .gardener-right { padding: 32px; }
+    .gardener-title { font-size: 48px; }
+    .stack { padding: 60px 32px; }
+    .stack-label { width: 140px; }
+    .cta { padding: 80px 32px; }
+    footer { padding: 0 32px; }
+    .nav-link { display: none; }
+  }
+
+  @media (max-width: 600px) {
+    .features-grid { grid-template-columns: 1fr; }
+    .feature-card { border-right: none !important; }
+    .hero-title { font-size: 64px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <img src="https://mark073.github.io/quaternuli/docs/images/logo.png" alt="Quaternuli logo">
+    <span>Q<span class="u">U</span>ATERNULI</span>
+  </a>
+  <div class="nav-links">
+    <a href="#features" class="nav-link">Features</a>
+    <a href="#gardener" class="nav-link">Gardener</a>
+    <a href="#stack" class="nav-link">Stack</a>
+    <a href="https://quaternuli.xyz/git" target="_blank" rel="noopener" class="nav-link">GitHub</a>
+    <a href="https://quaternuli.xyz/app" target="_blank" rel="noopener" class="nav-link">Live App</a>
+    <a href="https://quaternuli.xyz/demo" target="_blank" rel="noopener" class="nav-cta">Try Demo →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-tag">v0.1.0 — Open Source</div>
+    <h1 class="hero-title">
+      SEED<br>
+      <span class="line2">NOTE</span><br>
+      BOOK
+    </h1>
+    <p class="hero-sub">
+      A notebook for <strong>half-formed thoughts</strong> — with an AI thinking partner called the Gardener. Capture raw ideas, tend them, harvest them when they're ready.
+    </p>
+    <div class="hero-buttons">
+      <a href="https://quaternuli.xyz/app" target="_blank" rel="noopener" class="btn-primary">
+        Live App
+      </a>
+      <a href="https://quaternuli.xyz/demo" target="_blank" rel="noopener" class="btn-secondary">
+        Try Demo
+      </a>
+      <a href="https://quaternuli.xyz/git" target="_blank" rel="noopener" class="btn-secondary">
+        GitHub →
+      </a>
+    </div>
+  </div>
+
+  <div class="hero-aside">
+    <div class="hero-aside-inner">
+      <div class="phase-block">
+        <div class="phase-num">1</div>
+        <div class="phase-content">
+          <div class="phase-label">Phase One</div>
+          <div class="phase-title">Capture</div>
+          <div class="phase-desc">Drop a thought before it disappears. No pressure to be clear or complete.</div>
+        </div>
+      </div>
+      <div class="phase-block">
+        <div class="phase-num">2</div>
+        <div class="phase-content">
+          <div class="phase-label">Phase Two</div>
+          <div class="phase-title">Tend</div>
+          <div class="phase-desc">Return to the seed. Develop it. The Gardener asks questions and finds connections.</div>
+        </div>
+      </div>
+      <div class="phase-block">
+        <div class="phase-num">3</div>
+        <div class="phase-content">
+          <div class="phase-label">Phase Three</div>
+          <div class="phase-title">Harvest</div>
+          <div class="phase-desc">Export as Markdown, HTML, plain text, or JSON. Your idea is ready for the world.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <h2 class="section-title">FEATURES</h2>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <span class="feature-icon"></span>
+      <div class="feature-name">Seed Notebook</div>
+      <div class="feature-desc">Capture half-formed thoughts without pressure. Seeds evolve through three deliberate phases.</div>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon"></span>
+      <div class="feature-name">AI Gardener</div>
+      <div class="feature-desc">A real Claude AI that reads your seeds and responds with insights, questions, and suggestions — streaming word by word.</div>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon"></span>
+      <div class="feature-name">Code Editor</div>
+      <div class="feature-desc">Full CodeMirror 6 editor with syntax highlighting for 8 languages, each with its own colour palette.</div>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon"></span>
+      <div class="feature-name">Local First</div>
+      <div class="feature-desc">All data stored in your browser's IndexedDB. Nothing leaves your machine except Gardener API calls.</div>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon"></span>
+      <div class="feature-name">Export</div>
+      <div class="feature-desc">Harvested seeds export as Markdown, plain text, styled HTML, or JSON for full portability.</div>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon"></span>
+      <div class="feature-name">Swiss Design</div>
+      <div class="feature-desc">Tight grid, Helvetica typography, single red accent. Clarity enforces thinking.</div>
+    </div>
+  </div>
+</section>
+
+<!-- GARDENER -->
+<section class="gardener" id="gardener">
+  <div class="gardener-left">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2 class="section-title">GARDENER</h2>
+    </div>
+    <h3 class="gardener-title">YOUR AI <span>THINKING</span> PARTNER</h3>
+    <p class="gardener-desc">
+      The Gardener is powered by <strong>Claude (Anthropic)</strong>. It reads your current seed and responds with focused, concise observations — streamed in real time, directly in the sidebar.
+    </p>
+    <p class="gardener-desc">
+      It is not a chatbot. It has one job: to help your ideas grow. Bring your own API key or self-host with yours.
+    </p>
+  </div>
+  <div class="gardener-right">
+    <div class="g-msg">
+      <div class="g-msg-label">Insight</div>
+      <div class="g-msg-text">There's a tension here worth pulling on — you're describing both a constraint and a freedom. The strongest ideas live in that gap.</div>
+    </div>
+    <div class="g-msg">
+      <div class="g-msg-label">Suggestion</div>
+      <div class="g-msg-text">Try writing the one-sentence version. Force yourself to compress until the core idea is undeniable.</div>
+    </div>
+    <div class="g-msg">
+      <div class="g-msg-label">Question</div>
+      <div class="g-msg-text">What would change if this idea were completely wrong?</div>
+    </div>
+  </div>
+</section>
+
+<!-- STACK -->
+<section class="stack" id="stack">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2 class="section-title">TECH STACK</h2>
+  </div>
+  <div class="stack-row">
+    <div class="stack-label">Framework</div>
+    <div class="stack-value"><a href="https://nextjs.org" target="_blank" rel="noopener">Next.js 15</a> + React 19</div>
+  </div>
+  <div class="stack-row">
+    <div class="stack-label">Language</div>
+    <div class="stack-value"><a href="https://www.typescriptlang.org" target="_blank" rel="noopener">TypeScript</a></div>
+  </div>
+  <div class="stack-row">
+    <div class="stack-label">Styling</div>
+    <div class="stack-value"><a href="https://tailwindcss.com" target="_blank" rel="noopener">Tailwind CSS</a></div>
+  </div>
+  <div class="stack-row">
+    <div class="stack-label">Code Editor</div>
+    <div class="stack-value"><a href="https://codemirror.net" target="_blank" rel="noopener">CodeMirror 6</a></div>
+  </div>
+  <div class="stack-row">
+    <div class="stack-label">State</div>
+    <div class="stack-value"><a href="https://zustand-demo.pmnd.rs" target="_blank" rel="noopener">Zustand</a></div>
+  </div>
+  <div class="stack-row">
+    <div class="stack-label">Storage</div>
+    <div class="stack-value"><a href="https://github.com/jakearchibald/idb" target="_blank" rel="noopener">idb</a> (IndexedDB)</div>
+  </div>
+  <div class="stack-row">
+    <div class="stack-label">AI</div>
+    <div class="stack-value"><a href="https://anthropic.com" target="_blank" rel="noopener">Anthropic SDK</a> — claude-sonnet-4-6</div>
+  </div>
+  <div class="stack-row">
+    <div class="stack-label">License</div>
+    <div class="stack-value">MIT — open source</div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <h2 class="cta-title">PLANT YOUR<br><span>FIRST SEED</span></h2>
+  <p class="cta-sub">Try the standalone demo — no installation, no API key required. Or clone the repo and self-host with your own Gardener.</p>
+  <div class="cta-buttons">
+    <a href="https://quaternuli.xyz/app" target="_blank" rel="noopener" class="btn-light">
+      Live App
+    </a>
+    <a href="https://quaternuli.xyz/demo" target="_blank" rel="noopener" class="btn-outline-light">
+      Demo
+    </a>
+    <a href="https://quaternuli.xyz/git" target="_blank" rel="noopener" class="btn-outline-light">
+      GitHub →
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-logo">Q<span class="u">U</span>ATERNULI</span>
+  <div class="footer-links">
+    <a href="https://quaternuli.xyz/app" target="_blank" rel="noopener" class="footer-link">Live App</a>
+    <a href="https://quaternuli.xyz/git" target="_blank" rel="noopener" class="footer-link">GitHub</a>
+    <a href="https://quaternuli.xyz/demo" target="_blank" rel="noopener" class="footer-link">Demo</a>
+    <a href="https://quaternuli.xyz/license" target="_blank" rel="noopener" class="footer-link">MIT License</a>
+  </div>
+  <span class="footer-copy">© 2025 mark073</span>
+</footer>
+
+</body>
+</html>
