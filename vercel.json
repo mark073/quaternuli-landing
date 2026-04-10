@@ -1,0 +1,8 @@
+{
+  "redirects": [
+    { "source": "/app", "destination": "https://quaternuli.vercel.app", "permanent": false },
+    { "source": "/demo", "destination": "https://mark073.github.io/quaternuli/demo.html", "permanent": true },
+    { "source": "/git", "destination": "https://github.com/mark073/quaternuli", "permanent": true },
+    { "source": "/license", "destination": "https://github.com/mark073/quaternuli/blob/main/LICENSE.md", "permanent": true }
+  ]
+}
