@@ -1,7 +1,8 @@
 {
   "rewrites": [
     { "source": "/app", "destination": "https://quaternuli.vercel.app" },
-    { "source": "/app/:path*", "destination": "https://quaternuli.vercel.app/:path*" }
+    { "source": "/app/:path*", "destination": "https://quaternuli.vercel.app/:path*" },
+    { "source": "/_next/:path*", "destination": "https://quaternuli.vercel.app/_next/:path*" }
   ],
   "redirects": [
     { "source": "/demo", "destination": "https://mark073.github.io/quaternuli/demo.html", "permanent": true },
