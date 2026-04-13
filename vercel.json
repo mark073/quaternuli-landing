@@ -2,6 +2,7 @@
   "rewrites": [
     { "source": "/app", "destination": "https://quaternuli.vercel.app" },
     { "source": "/app/:path*", "destination": "https://quaternuli.vercel.app/:path*" },
+    { "source": "/api/:path*", "destination": "https://quaternuli.vercel.app/api/:path*" },
     { "source": "/_next/:path*", "destination": "https://quaternuli.vercel.app/_next/:path*" }
   ],
   "redirects": [
